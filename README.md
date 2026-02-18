@@ -62,36 +62,4 @@ A sidebar AI tutor widget for a high school science class website.
 2. Hard refresh browser (`Ctrl+F5`)
 3. If needed, deactivate/reactivate plugin once
 
----
 
-## Publish This Project to GitHub (GitHub Desktop)
-
-### If repo is not created yet
-
-1. Open **GitHub Desktop**
-2. **File > Add local repository...**
-3. Choose this folder: `...\science-class-chatbot`
-4. If prompted that it is not a repo, click **Create a repository**
-5. Name it (example: `science-class-chatbot-wp`)
-6. Add a summary and keep this `README.md`
-7. Click **Create repository**
-
-### Commit and publish
-
-1. In GitHub Desktop, review changed files
-2. Enter commit message (example: `Initial plugin version`)
-3. Click **Commit to main**
-4. Click **Publish repository**
-5. Choose visibility (Public/Private)
-6. Click **Publish Repository**
-
-### If repo already exists on GitHub
-
-1. In GitHub Desktop, commit locally
-2. Click **Push origin**
-
-### Future updates
-
-1. Edit files locally
-2. In GitHub Desktop: commit
-3. Click **Push origin**
