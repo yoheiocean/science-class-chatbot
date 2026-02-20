@@ -43,6 +43,8 @@
     var sendBtn = el('scsb-send-btn');
     var resultEl = el('scsb-result');
     var statePhotoEl = el('scsb-state-photo');
+    var coinsEarnedEl = el('scsb-coins-earned');
+    var objectiveCountEl = el('scsb-objective-count');
     var leaderboardContainer = el('scsb-leaderboard-container');
     var leaderboardSubjectSelect = el('scsb-leaderboard-subject');
     var stateImages = window.SCSBConfig.stateImages || {};
@@ -93,15 +95,40 @@
         .catch(function () {});
     }
 
+    function setCoinsEarned(coinsAwarded) {
+      if (!coinsEarnedEl) {
+        return;
+      }
+      var amount = parseInt(coinsAwarded, 10);
+      if (isNaN(amount) || amount <= 0) {
+        coinsEarnedEl.textContent = '';
+        coinsEarnedEl.classList.remove('is-visible');
+        return;
+      }
+      coinsEarnedEl.textContent = amount + ' coin' + (amount === 1 ? '' : 's') + ' earned!';
+      coinsEarnedEl.classList.add('is-visible');
+    }
+
     var rawLessons = (window.SCSBConfig && window.SCSBConfig.lessons) || [];
     var lessons = rawLessons.map(function (lesson) {
       var title = lesson.lesson_name || lesson.title || '';
       var slug = lesson.slug || title.toLowerCase().replace(/\s+/g, '-');
+      var objectiveCount = 0;
+      if (Array.isArray(lesson.objectives)) {
+        lesson.objectives.forEach(function (objectiveText) {
+          if (typeof objectiveText === 'string' && objectiveText.trim()) {
+            objectiveCount++;
+          }
+        });
+      } else if (lesson.objective && String(lesson.objective).trim()) {
+        objectiveCount = 1;
+      }
       return {
         id: lesson.id || slug,
         subject: lesson.subject || 'General Science',
         title: title,
-        slug: slug
+        slug: slug,
+        objectiveCount: objectiveCount
       };
     }).filter(function (lesson) {
       return !!lesson.id && !!lesson.title;
@@ -151,8 +178,25 @@
         option.value = lesson.id;
         option.textContent = lesson.title;
         option.setAttribute('data-slug', lesson.slug);
+        option.setAttribute('data-objective-count', String(lesson.objectiveCount || 0));
         lessonSelect.appendChild(option);
       });
+    }
+
+    function renderObjectiveCount() {
+      if (!objectiveCountEl) {
+        return;
+      }
+      var selectedOption = lessonSelect.options[lessonSelect.selectedIndex];
+      if (!selectedOption || !selectedOption.value) {
+        objectiveCountEl.textContent = '';
+        return;
+      }
+      var count = parseInt(selectedOption.getAttribute('data-objective-count') || '0', 10);
+      if (isNaN(count) || count < 0) {
+        count = 0;
+      }
+      objectiveCountEl.textContent = (count === 1 ? 'Objective' : 'Objectives') + ' to complete for this lesson: ' + count;
     }
 
     function renderHistory() {
@@ -171,15 +215,21 @@
 
     subjectSelect.addEventListener('change', function () {
       populateLessonsForSubject(subjectSelect.value);
+      renderObjectiveCount();
       renderHistory();
     });
     if (leaderboardSubjectSelect) {
       leaderboardSubjectSelect.addEventListener('change', refreshLeaderboard);
     }
-    lessonSelect.addEventListener('change', renderHistory);
+    lessonSelect.addEventListener('change', function () {
+      renderObjectiveCount();
+      renderHistory();
+    });
     if (!subjectSelect.disabled && subjectSelect.value) {
       populateLessonsForSubject(subjectSelect.value);
     }
+    renderObjectiveCount();
+    setCoinsEarned(0);
     renderHistory();
     setPhotoState('idle');
     refreshLeaderboard();
@@ -196,6 +246,7 @@
       inputEl.value = '';
       resultEl.textContent = 'Thinking...';
       sendBtn.disabled = true;
+      setCoinsEarned(0);
       setPhotoState('thinking');
 
       var history = loadHistory(userId, lessonSlug);
@@ -235,6 +286,7 @@
           history.push({ role: 'bot', content: botReply });
           saveHistory(userId, lessonSlug, history);
           refreshLeaderboard();
+          setCoinsEarned(d.coinsAwarded);
 
           if (d.objectiveMet) {
             var coinPart = d.coinsAwarded > 0 ? ' | +' + d.coinsAwarded + ' Yohei Coin' : ' | Objective already completed';

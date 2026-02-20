@@ -18,9 +18,17 @@ class SCSB_Chat_Widget extends WP_Widget {
 
         if (!is_user_logged_in()) {
             $login_url = wp_login_url(get_permalink());
+            $settings = get_option('scsb_settings', array());
+            $idle_image_id = isset($settings['image_idle_id']) ? absint($settings['image_idle_id']) : 0;
+            $idle_image_url = $idle_image_id > 0 ? wp_get_attachment_image_url($idle_image_id, 'medium') : '';
             ?>
             <div class="scsb-chat-wrap">
-                <p>Please log in to use the lesson chatbot.</p>
+                <p>Please log in to use the lesson coach.</p>
+                <?php if ($idle_image_url) : ?>
+                    <div class="scsb-state-photo-wrap">
+                        <img class="scsb-state-photo" src="<?php echo esc_url($idle_image_url); ?>" alt="Lesson coach idle state" />
+                    </div>
+                <?php endif; ?>
                 <p><a href="<?php echo esc_url($login_url); ?>">Log in</a></p>
             </div>
             <?php
@@ -39,6 +47,7 @@ class SCSB_Chat_Widget extends WP_Widget {
 
             <label for="scsb-lesson-select">Lesson</label>
             <select id="scsb-lesson-select" class="scsb-input"></select>
+            <div id="scsb-objective-count" class="scsb-objective-count" aria-live="polite"></div>
 
             <div id="scsb-chat-log" class="scsb-chat-log" aria-live="polite"></div>
 
@@ -48,6 +57,7 @@ class SCSB_Chat_Widget extends WP_Widget {
             </div>
             <div class="scsb-state-photo-wrap">
                 <img id="scsb-state-photo" class="scsb-state-photo" src="" alt="Chatbot status" style="display:none;" />
+                <div id="scsb-coins-earned" class="scsb-coins-earned" aria-live="polite"></div>
             </div>
 
             <div id="scsb-result" class="scsb-result"></div>

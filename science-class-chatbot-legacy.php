@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Science Class Sidebar Chatbot
+ * Plugin Name: Science Class Sidebar Chatbot (Legacy PHP)
  * Description: Sidebar chatbot for lesson coaching with teacher personality, lesson objectives, and progress tracking.
- * Version: 0.1.11
+ * Version: 0.1.11-legacy
  * Author: Yohei
  */
 
@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('SCSB_VERSION', '0.1.11');
+define('SCSB_VERSION', '0.1.11-legacy');
 define('SCSB_PLUGIN_FILE', __FILE__);
 define('SCSB_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SCSB_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -550,7 +550,10 @@ class Science_Class_Sidebar_Chatbot {
             );
         }
         usort($rows, function ($a, $b) {
-            return $b['coins'] <=> $a['coins'];
+            if ($b['coins'] == $a['coins']) {
+                return 0;
+            }
+            return ($b['coins'] < $a['coins']) ? 1 : -1;
         });
         $rows = array_slice($rows, 0, $limit);
 

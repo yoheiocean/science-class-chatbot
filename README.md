@@ -62,4 +62,3 @@ A sidebar AI tutor widget for a high school science class website.
 2. Hard refresh browser (`Ctrl+F5`)
 3. If needed, deactivate/reactivate plugin once
 
-

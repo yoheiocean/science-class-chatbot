@@ -30,6 +30,14 @@
   text-align: center;
 }
 
+.scsb-objective-count {
+  margin-top: -4px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f5132;
+}
+
 .scsb-state-photo {
   width: 50%;
   max-width: 220px;
@@ -39,6 +47,19 @@
   border-radius: 8px;
   border: 1px solid #e3e8ef;
   background: #fff;
+}
+
+.scsb-coins-earned {
+  min-height: 26px;
+  margin-top: 8px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #065f46;
+  text-shadow: 0 1px 0 #ffffff;
+}
+
+.scsb-coins-earned.is-visible {
+  color: #b45309;
 }
 
 .scsb-msg {
